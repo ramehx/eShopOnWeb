@@ -5,11 +5,11 @@ on: workflow_dispatch
 
 #Environment variables https://docs.github.com/en/actions/learn-github-actions/environment-variables
 env:
-  RESOURCE-GROUP: rg-eshoponweb-dyegosouza
+  RESOURCE_GROUP: rg-eshoponweb-dyegosouza
   LOCATION: westeurope
-  TEMPLATE-FILE: infra/webapp.bicep
-  SUBSCRIPTION-ID: ed816681-861f-4ac3-b25c-1d0fd010f5ff
-  WEBAPP-NAME: devops-webapp-westeurope-2387820132
+  TEMPLATE_FILE: infra/webapp.bicep
+  SUBSCRIPTION_ID: ed816681-861f-4ac3-b25c-1d0fd010f5ff
+  WEBAPP_NAME: devops-webapp-westeurope-2387820132
 
 jobs:
   #Build, test and publish .net web project in repository
@@ -46,7 +46,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: bicep-template
-        path: ${{ env.TEMPLATE-FILE }}
+        path: ${{ env.TEMPLATE_FILE }}
   login:
     permissions:
       id-token: write
@@ -94,10 +94,10 @@ jobs:
     - name: deploy
       uses: azure/arm-deploy@v2
       with:
-        subscriptionId: ${{ env.SUBSCRIPTION-ID }}
-        resourceGroupName: ${{ env.RESOURCE-GROUP }}
+        subscriptionId: ${{ env.SUBSCRIPTION_ID }}
+        resourceGroupName: ${{ env.RESOURCE_GROUP }}
         template: bicep-template/webapp.bicep
-        parameters: 'webAppName=${{ env.WEBAPP-NAME }} location=${{ env.LOCATION }}'
+        parameters: 'webAppName=${{ env.WEBAPP_NAME }} location=${{ env.LOCATION }}'
         failOnStdErr: false   
     
     # Publish website to Azure App Service (WebApp)
@@ -107,7 +107,7 @@ jobs:
       uses: Azure/webapps-deploy@v3
       with:
         type: ZIP
-        app-name: ${{ env.WEBAPP-NAME  }}
+        app-name: ${{ env.WEBAPP_NAME  }}
         package: .net-app/app.zip
 
     # Publish website to Azure App Service using CLI (WebApp)
@@ -115,6 +115,11 @@ jobs:
       uses: Azure/cli@v2
       with:
         inlineScript: |
-             az webapp deploy --name ${{ env.WEBAPP-NAME }} --resource-group ${{ env.RESOURCE-GROUP }} --src-path .net-app/app.zip --type zip
-      
- 
+             az webapp deploy --name ${{ env.WEBAPP_NAME }} --resource-group ${{ env.RESOURCE_GROUP }} --src-path .net-app/app.zip --type zip
+
+    # Add debug steps to capture more information
+    - name: Print environment variables
+      run: printenv
+
+    - name: Check Azure CLI version
+      run: az version
