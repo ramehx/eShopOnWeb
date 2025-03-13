@@ -10,6 +10,11 @@ env:
   TEMPLATE-FILE: infra/webapp.bicep
   SUBSCRIPTION-ID: ed816681-861f-4ac3-b25c-1d0fd010f5ff
   WEBAPP-NAME: devops-webapp-westeurope-2387820132
+  
+permissions:
+  id-token: write
+  pages: write
+  contents: read
 
 jobs:
   #Build, test and publish .net web project in repository
@@ -54,10 +59,7 @@ jobs:
     needs: buildandtest
     environment:
       name: 'Development'
-    permissions:
-      id-token: write
-      pages: write
-      contents: read
+
     steps:
     
     #Download the publish files created in previous job
