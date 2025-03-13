@@ -67,11 +67,6 @@ jobs:
         subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
         enable-AzPSSession: true
 
-    - name: Azure CLI script
-      uses: azure/cli@v2
-      with:
-        azcliversion: latest
-
          
   # Use Bicep to deploy infrastructure + Publish webapp 
   deploy:
@@ -95,6 +90,12 @@ jobs:
       with:
         name: bicep-template
         path: bicep-template
+        
+    #Install Azure CLI
+    - name: Install Azure CLI
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y azure-cli
            
     # Deploy Azure WebApp using Bicep file
     - name: deploy
@@ -122,7 +123,7 @@ jobs:
       with:
         inlineScript: |
              az webapp deploy --name ${{ env.WEBAPP_NAME }} --resource-group ${{ env.RESOURCE_GROUP }} --src-path .net-app/app.zip --type zip
-
+            
     # Add debug steps to capture more information
     - name: Print environment variables
       run: printenv
