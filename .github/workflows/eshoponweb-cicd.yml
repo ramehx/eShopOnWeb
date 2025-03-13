@@ -107,15 +107,6 @@ jobs:
         parameters: 'webAppName=${{ env.WEBAPP_NAME }} location=${{ env.LOCATION }}'
         failOnStdErr: false   
     
-    # Publish website to Azure App Service (WebApp)
-    # Step disabled due to issue where the site sometimes can't be found: https://github.com/microsoft/pipelines-appservice-lib/issues/56. Instead deploy using CLI
-    - name: Publish Website to WebApp
-      if: false #Disable step due to comment above
-      uses: Azure/webapps-deploy@v3
-      with:
-        type: ZIP
-        app-name: ${{ env.WEBAPP_NAME  }}
-        package: .net-app/app.zip
 
     # Publish website to Azure App Service using CLI (WebApp)
     - name: Publish Website to WebApp
@@ -124,9 +115,3 @@ jobs:
         inlineScript: |
              az webapp deploy --name ${{ env.WEBAPP_NAME }} --resource-group ${{ env.RESOURCE_GROUP }} --src-path .net-app/app.zip --type zip
             
-    # Add debug steps to capture more information
-    - name: Print environment variables
-      run: printenv
-
-    - name: Check Azure CLI version
-      run: az version
